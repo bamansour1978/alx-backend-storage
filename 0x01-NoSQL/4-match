@@ -1,0 +1,4 @@
+// documentation
+
+db.school.find({ "name" : "Holberton school" })
+
