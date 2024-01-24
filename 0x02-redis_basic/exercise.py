@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Contains the class definition for redis cache
+Module documentation
 """
 import redis
 import uuid
@@ -10,22 +10,12 @@ from typing import Union, Callable, Optional
 
 def count_calls(method: Callable) -> Callable:
     """
-    Counts the number of times a function is called
-    Args:
-        method: The function to be decorated
-    Returns:
-        The decorated function
+    Func doc
     """
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         """
-        Wrapper function for the decorated function
-        Args:
-            self: The object instance
-            *args: The arguments passed to the function
-            **kwargs: The keyword arguments passed to the function
-        Returns:
-            The return value of the decorated function
+        Func doc
         """
         key = method.__qualname__
         self._redis.incr(key)
@@ -36,11 +26,7 @@ def count_calls(method: Callable) -> Callable:
 
 def call_history(method: Callable) -> Callable:
     """
-    Counts the number of times a function is called
-    Args:
-        method: The function to be decorated
-    Returns:
-        The decorated function
+    Func doc
     """
     key = method.__qualname__
     inputs = key + ":inputs"
@@ -49,13 +35,7 @@ def call_history(method: Callable) -> Callable:
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         """
-        Wrapper function for the decorated function
-        Args:
-            self: The object instance
-            *args: The arguments passed to the function
-            **kwargs: The keyword arguments passed to the function
-        Returns:
-            The return value of the decorated function
+        Func doc
         """
         self._redis.rpush(inputs, str(args))
         data = method(self, *args, **kwargs)
@@ -67,11 +47,7 @@ def call_history(method: Callable) -> Callable:
 
 def replay(method: Callable) -> None:
     """
-    Replays the history of a function
-    Args:
-        method: The function to be decorated
-    Returns:
-        None
+    Func doc
     """
     name = method.__qualname__
     cache = redis.Redis()
@@ -86,13 +62,11 @@ def replay(method: Callable) -> None:
 
 class Cache:
     """
-    Defines methods to handle redis cache operations
+    Class doc
     """
     def __init__(self) -> None:
         """
-        Initialize redis client
-        Attributes:
-            self._redis (redis.Redis): redis client
+        Init
         """
         self._redis = redis.Redis()
         self._redis.flushdb()
@@ -101,11 +75,7 @@ class Cache:
     @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
-        Store data in redis cache
-        Args:
-            data (dict): data to store
-        Returns:
-            str: key
+        Func doc
         """
         key = str(uuid.uuid4())
         self._redis.set(key, data)
@@ -114,7 +84,7 @@ class Cache:
     def get(self, key: str, fn: Optional[Callable] = None)\
             -> Union[str, bytes, int, float, None]:
         """
-        Get data from redis cache
+        Func doc
         """
         data = self._redis.get(key)
         if data is not None and fn is not None and callable(fn):
@@ -123,21 +93,13 @@ class Cache:
 
     def get_str(self, key: str) -> str:
         """
-        Get data as string from redis cache
-        Args:
-            key (str): key
-        Returns:
-            str: data
+        Func doc
         """
         data = self.get(key, lambda x: x.decode('utf-8'))
         return data
 
     def get_int(self, key: str) -> int:
         """
-        Get data as integer from redis cache
-        Args:
-            key (str): key
-        Returns:
-            int: data
+        Func doc
         """
         data = self
